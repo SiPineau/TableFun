@@ -20,6 +20,7 @@
 #' @param savename Argument optionnel. Enregistre le tableau au format .docx dans l'esapce de travail. L'argument doit être entre guillemets.
 #'
 #' @return
+#' @export
 #'
 #' @examples
 #'
