@@ -21,7 +21,6 @@
 #'
 #' @return
 #' @export
-#'
 #' @examples
 #'
 TableFun <- function(df, header, digits = 2, left.align = NULL,right.align = NULL, top.align = NULL, bottom.align = NULL, merge.col = 1, footer = NULL, foot.note.header = NULL, foot.note.body = NULL, savename = NULL){
