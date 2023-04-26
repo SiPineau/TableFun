@@ -7,6 +7,4 @@ Maintainer: Simon Pineau <simon.pineau@u-bordeaux.fr>
 Description: Permet de créer des tableaux aux norme APA à partir de dataframe.
 License: What license is it under?
 Encoding: UTF-8
-LazyData: true
-Imports: flextable, export, officer, stringr, dplyr, tidyr, rempsyc
 RoxygenNote: 7.2.3
