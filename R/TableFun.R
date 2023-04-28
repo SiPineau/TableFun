@@ -19,6 +19,7 @@
 #' @param foot.note.body Argument optionnel. Insert une note specifique attachée à une cellule du corps du tableau. La rédaction de l'argument est la même que celle de foot.note.header en ajoutant le numéro de la ligne après le numéro de la colonne : c(1, 1, "a","note specifique")
 #' @param savename Argument optionnel. Enregistre le tableau au format .docx dans l'esapce de travail. L'argument doit être entre guillemets.
 #'
+#' @import rempsyc flextable export officer stringr dplyr tidyr
 #' @return
 #' @export
 #' @examples
