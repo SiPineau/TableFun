@@ -4,7 +4,7 @@
 #'@author Simon Pineau
 #'
 #'@description
-#'Permet de créer des tableaux aux norme APA à partir de dataframe.
+#'Permet de créer des tableaux aux normes APA à partir de dataframe.
 #'
 #' @param df Un jeu de données (dataframe).
 #' @param header Nom du tableau entre guillemets.
@@ -13,18 +13,36 @@
 #' @param right.align Argument optionnel. Aligne les informations du corps du tableau à droite.
 #' @param top.align Argument optionnel. Aligne les informations du corps du tableau en haut.
 #' @param bottom.align Argument optionnel. Aligne les informations du corps du tableau en bas.
-#' @param merge.col Funsionne les lignes similaires adjacentes des colonnes spécifiées. Par default merge.col = 1.
+#' @param merge.col Argument optionnel. Funsionne les lignes similaires adjacentes des colonnes spécifiées.
 #' @param footer Argument optionnel. Insert une note de bas de tableau générale. L'argument doit être entre guillemets.
 #' @param foot.note.header Argument optionnel. Insert une note specifique attachée un titre de colonne. Cette argument doit être un vecteur composé : du numéro de la colonne, de la "lettre" associé à la note, et de la "note specifique" : c(1,"a","note specifique"). Plusieurs notes spécifiques peuvent être ajoutées : c(1,"a","note specifique1", 2,"b","note specifique2").
 #' @param foot.note.body Argument optionnel. Insert une note specifique attachée à une cellule du corps du tableau. La rédaction de l'argument est la même que celle de foot.note.header en ajoutant le numéro de la ligne après le numéro de la colonne : c(1, 1, "a","note specifique")
+#' @param mathsymbols rgument optionnel. Insert une note specifique attachée à une cellule du corps du tableau. La rédaction de l'argument est la même que celle de foot.note.header en ajoutant le numéro de la ligne après le numéro de la colonne : c(1, c(1,5), "header","//omega")
 #' @param savename Argument optionnel. Enregistre le tableau au format .docx dans l'esapce de travail. L'argument doit être entre guillemets.
 #'
 #' @import rempsyc flextable export officer stringr dplyr tidyr
 #' @return
 #' @export
 #' @examples
+#' # Tableau "simple"
+#' df<-data.frame("Variables" = c(1,2,3),
+#'                "Moyenne" = c(32,22,15),
+#'                "ET" = c(0.2,0.8,0.4))
 #'
-TableFun <- function(df, header, digits = 2, left.align = NULL,right.align = NULL, top.align = NULL, bottom.align = NULL, merge.col = 1, footer = NULL, foot.note.header = NULL, foot.note.body = NULL, savename = NULL){
+#' TableFun(df, header = "Moyenne et ecart-type des 3 variables",foot.note.header = c(3,"a","ET = Ecart-type"))
+#'
+#' # Tableau avec plusieurs niveaux de noms de colonnes
+#'
+#' df<-data.frame("Variables" = c(1,2,3),
+#'                "T1_Moyenne" = c(32,22,15),
+#'                "T1_ET" = c(0.2,0.8,0.4),
+#'                "T2_Moyenne" = c(30,24,18),
+#'                "T2_ET" = c(0.3,0.5,0.6))
+#'
+#' TableFun(df,header = "Moyennes et Ecarts-types à 2 temps de mesure", foot.note.header = c(3,"a","ET = Ecart-type"))
+#'
+#'
+TableFun <- function(df, header, digits = 2, left.align = NULL,right.align = NULL, top.align = NULL, bottom.align = NULL, merge.col = NULL, footer = NULL, foot.note.header = NULL, foot.note.body = NULL, mathsymbols = NULL, savename = NULL){
   x<-flextable(df %>% mutate(across(where(is.numeric), round, digits))) %>%
     separate_header() %>%
     autofit() %>%
@@ -49,10 +67,20 @@ TableFun <- function(df, header, digits = 2, left.align = NULL,right.align = NUL
                                     width = 0.25,
                                     style = "solid")) %>%
 
-    merge_v(j = merge.col, combine = TRUE) %>%
     align(part = "all", align = "center") %>%
     align(i = 1, part = "header", align = "left") %>%
     align(i = 1, part = "footer", align = "left")
+
+
+
+
+  if(!missing(merge.col)){
+    x<-merge_v(x, j = merge.col, combine = TRUE)
+  }
+
+  if(!missing(mathsymbols)){
+    x<-compose(x, i=mathsymbols[1], j = c(mathsymbols[2]), part = mathsymbols[3], value = as_paragraph(as_equation(mathsymbols[4])))
+  }
 
   if(!missing(footer) | !missing(foot.note.header) | !missing(foot.note.body)){
     x<-add_footer_lines(x,values = "")

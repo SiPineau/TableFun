@@ -45,7 +45,27 @@ TableFun(
 \item{savename}{Argument optionnel. Enregistre le tableau au format .docx dans l'esapce de travail. L'argument doit être entre guillemets.}
 }
 \description{
-Permet de créer des tableaux aux norme APA à partir de dataframe.
+Permet de créer des tableaux aux normes APA à partir de dataframe.
+}
+\examples{
+# Tableau "simple"
+df<-data.frame("Variables" = c(1,2,3),
+               "Moyenne" = c(32,22,15),
+               "ET" = c(0.2,0.8,0.4))
+
+TableFun(df, header = "Moyenne et ecart-type des 3 variables",foot.note.header = c(3,"a","ET = Ecart-type"))
+
+# Tableau avec plusieurs niveaux de noms de colonnes
+
+df<-data.frame("Variables" = c(1,2,3),
+               "T1_Moyenne" = c(32,22,15),
+               "T1_ET" = c(0.2,0.8,0.4),
+               "T2_Moyenne" = c(30,24,18),
+               "T2_ET" = c(0.3,0.5,0.6))
+
+TableFun(df,header = "Moyennes et Ecarts-types à 2 temps de mesure", foot.note.header = c(3,"a","ET = Ecart-type"))
+
+
 }
 \author{
 Simon Pineau
