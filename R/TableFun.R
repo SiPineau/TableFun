@@ -17,7 +17,6 @@
 #' @param footer Argument optionnel. Insert une note de bas de tableau générale. L'argument doit être entre guillemets.
 #' @param foot.note.header Argument optionnel. Insert une note specifique attachée un titre de colonne. Cette argument doit être un vecteur composé : du numéro de la colonne, de la "lettre" associé à la note, et de la "note specifique" : c(1,"a","note specifique"). Plusieurs notes spécifiques peuvent être ajoutées : c(1,"a","note specifique1", 2,"b","note specifique2").
 #' @param foot.note.body Argument optionnel. Insert une note specifique attachée à une cellule du corps du tableau. La rédaction de l'argument est la même que celle de foot.note.header en ajoutant le numéro de la ligne après le numéro de la colonne : c(1, 1, "a","note specifique")
-#' @param mathsymbols rgument optionnel. Insert une note specifique attachée à une cellule du corps du tableau. La rédaction de l'argument est la même que celle de foot.note.header en ajoutant le numéro de la ligne après le numéro de la colonne : c(1, c(1,5), "header","//omega")
 #' @param savename Argument optionnel. Enregistre le tableau au format .docx dans l'esapce de travail. L'argument doit être entre guillemets.
 #'
 #' @import rempsyc flextable export officer stringr dplyr tidyr
@@ -79,7 +78,7 @@ TableFun <- function(df, header, digits = 2, left.align = NULL,right.align = NUL
   }
 
   if(!missing(mathsymbols)){
-    x<-compose(x, i=mathsymbols[1], j = c(mathsymbols[2]), part = mathsymbols[3], value = as_paragraph(as_equation(mathsymbols[4])))
+    x<-compose(x, i=as.double(mathsymbols[1]), j = c(mathsymbols[2]), part = mathsymbols[3], value = as_paragraph(as_equation(mathsymbols[4])))
   }
 
   if(!missing(footer) | !missing(foot.note.header) | !missing(foot.note.body)){
