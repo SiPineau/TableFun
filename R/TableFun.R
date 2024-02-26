@@ -128,11 +128,11 @@ TableFun <- function(df, header, digits = 2, left.align = NULL,right.align = NUL
   }
 
   if(!missing(H.rotate)){
-    x <- rotate(x, j = c(H.rotate), rotation = "tbrl", part = "header")
+    x <- rotate(x, i = c(-1),  j = c(H.rotate), rotation = "btlr", part = "header")
   }
 
   if(!missing(B.rotate)){
-    x <- rotate(x, j = c(B.rotate), rotation = "tbrl", part = "body")
+    x <- rotate(x, j = c(B.rotate), rotation = "btlr", part = "body")
   }
 
   x<-fix_border_issues(x,part = "all")
