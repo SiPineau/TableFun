@@ -12,58 +12,65 @@ TableFun(
   right.align = NULL,
   top.align = NULL,
   bottom.align = NULL,
-  merge.col = 1,
+  merge.col = NULL,
+  first_col.header = NULL,
   footer = NULL,
   foot.note.header = NULL,
   foot.note.body = NULL,
+  H.rotate = NULL,
+  B.rotate = NULL,
   savename = NULL
 )
 }
 \arguments{
-\item{df}{Un jeu de données (dataframe).}
+\item{df}{A dataset (dataframe).}
 
-\item{header}{Nom du tableau entre guillemets.}
+\item{header}{Name of the table in quotes.}
 
-\item{digits}{Nombre de décimale dans le tableau. Par default digits = 2.}
+\item{digits}{Number of decimal places in the table. By default digits = 2.}
 
-\item{left.align}{Argument optionnel. Aligne les informations du corps du tableau à gauche.}
+\item{left.align}{Optional argument. Aligns the information in the body of the table to the left.}
 
-\item{right.align}{Argument optionnel. Aligne les informations du corps du tableau à droite.}
+\item{right.align}{Optional argument. Aligns the information in the body of the table to the right.}
 
-\item{top.align}{Argument optionnel. Aligne les informations du corps du tableau en haut.}
+\item{top.align}{Optional argument. Aligns the information in the body of the table at the top.}
 
-\item{bottom.align}{Argument optionnel. Aligne les informations du corps du tableau en bas.}
+\item{bottom.align}{Optional argument. Aligns the information in the body of the table at the bottom.}
 
-\item{merge.col}{Funsionne les lignes similaires adjacentes des colonnes spécifiées. Par default merge.col = 1.}
+\item{merge.col}{Optional argument. Merges adjacent similar rows of specified columns.}
 
-\item{footer}{Argument optionnel. Insert une note de bas de tableau générale. L'argument doit être entre guillemets.}
+\item{footer}{Optional argument. Inserts a general table footnote. The argument must be in quotes.}
 
-\item{foot.note.header}{Argument optionnel. Insert une note specifique attachée un titre de colonne. Cette argument doit être un vecteur composé : du numéro de la colonne, de la "lettre" associé à la note, et de la "note specifique" : c(1,"a","note specifique"). Plusieurs notes spécifiques peuvent être ajoutées : c(1,"a","note specifique1", 2,"b","note specifique2").}
+\item{foot.note.header}{Optional argument. Inserts a specific note attached to a column title. This argument must be a vector composed of: the column number, the "letter" associated with the note, and the "specific note": c(1, "a", "specific note"). Several specific notes can be added as follow: c(1, "a", "specific note1", 2, "b", "specific note2").}
 
-\item{foot.note.body}{Argument optionnel. Insert une note specifique attachée à une cellule du corps du tableau. La rédaction de l'argument est la même que celle de foot.note.header en ajoutant le numéro de la ligne après le numéro de la colonne : c(1, 1, "a","note specifique")}
+\item{foot.note.body}{Optional argument. Inserts a specific note attached to a cell in the body of the table. The argument is written the same way as foot.note.header by adding the row number after the column number: c(1, 1, "a", "specific note")}
 
-\item{savename}{Argument optionnel. Enregistre le tableau au format .docx dans l'esapce de travail. L'argument doit être entre guillemets.}
+\item{H.rotate}{Optional argument. Select columns to rotate the header's text.}
+
+\item{B.rotate}{Optional argument. Select columns to rotate the body's text.}
+
+\item{savename}{Optional argument. Saves the table in .docx format in the working space. The argument must be in quotes.}
 }
 \description{
-Permet de créer des tableaux aux normes APA à partir de dataframe.
+Create an APA norme table.
 }
 \examples{
 # Tableau "simple"
 df<-data.frame("Variables" = c(1,2,3),
-               "Moyenne" = c(32,22,15),
-               "ET" = c(0.2,0.8,0.4))
+               "Mean" = c(32,22,15),
+               "SD" = c(0.2,0.8,0.4))
 
-TableFun(df, header = "Moyenne et ecart-type des 3 variables",foot.note.header = c(3,"a","ET = Ecart-type"))
+TableFun(df, header = "Mean and sd",foot.note.header = c(3,"a","SD = Standard deviation"))
 
 # Tableau avec plusieurs niveaux de noms de colonnes
 
 df<-data.frame("Variables" = c(1,2,3),
-               "T1_Moyenne" = c(32,22,15),
-               "T1_ET" = c(0.2,0.8,0.4),
-               "T2_Moyenne" = c(30,24,18),
-               "T2_ET" = c(0.3,0.5,0.6))
+               "T1_Mean" = c(32,22,15),
+               "T1_SD" = c(0.2,0.8,0.4),
+               "T2_Mean" = c(30,24,18),
+               "T2_SD" = c(0.3,0.5,0.6))
 
-TableFun(df,header = "Moyennes et Ecarts-types à 2 temps de mesure", foot.note.header = c(3,"a","ET = Ecart-type"))
+TableFun(df,header = "Mean and sd across 2 times points", foot.note.header = c(3,"a","ET = Standard deviation"))
 
 
 }

@@ -4,20 +4,22 @@
 #'@author Simon Pineau
 #'
 #'@description
-#'Permet de créer des tableaux aux normes APA à partir de dataframe.
+#'Create an APA norme table.
 #'
-#' @param df Un jeu de données (dataframe).
-#' @param header Nom du tableau entre guillemets.
-#' @param digits Nombre de décimale dans le tableau. Par default digits = 2.
-#' @param left.align Argument optionnel. Aligne les informations du corps du tableau à gauche.
-#' @param right.align Argument optionnel. Aligne les informations du corps du tableau à droite.
-#' @param top.align Argument optionnel. Aligne les informations du corps du tableau en haut.
-#' @param bottom.align Argument optionnel. Aligne les informations du corps du tableau en bas.
-#' @param merge.col Argument optionnel. Funsionne les lignes similaires adjacentes des colonnes spécifiées.
-#' @param footer Argument optionnel. Insert une note de bas de tableau générale. L'argument doit être entre guillemets.
-#' @param foot.note.header Argument optionnel. Insert une note specifique attachée un titre de colonne. Cette argument doit être un vecteur composé : du numéro de la colonne, de la "lettre" associé à la note, et de la "note specifique" : c(1,"a","note specifique"). Plusieurs notes spécifiques peuvent être ajoutées : c(1,"a","note specifique1", 2,"b","note specifique2").
-#' @param foot.note.body Argument optionnel. Insert une note specifique attachée à une cellule du corps du tableau. La rédaction de l'argument est la même que celle de foot.note.header en ajoutant le numéro de la ligne après le numéro de la colonne : c(1, 1, "a","note specifique")
-#' @param savename Argument optionnel. Enregistre le tableau au format .docx dans l'esapce de travail. L'argument doit être entre guillemets.
+#' @param df A dataset (dataframe).
+#' @param header Name of the table in quotes.
+#' @param digits Number of decimal places in the table. By default digits = 2.
+#' @param left.align Optional argument. Aligns the information in the body of the table to the left.
+#' @param right.align Optional argument. Aligns the information in the body of the table to the right.
+#' @param top.align Optional argument. Aligns the information in the body of the table at the top.
+#' @param bottom.align Optional argument. Aligns the information in the body of the table at the bottom.
+#' @param merge.col Optional argument. Merges adjacent similar rows of specified columns.
+#' @param footer Optional argument. Inserts a general table footnote. The argument must be in quotes.
+#' @param foot.note.header Optional argument. Inserts a specific note attached to a column title. This argument must be a vector composed of: the column number, the "letter" associated with the note, and the "specific note": c(1, "a", "specific note"). Several specific notes can be added as follow: c(1, "a", "specific note1", 2, "b", "specific note2").
+#' @param foot.note.body Optional argument. Inserts a specific note attached to a cell in the body of the table. The argument is written the same way as foot.note.header by adding the row number after the column number: c(1, 1, "a", "specific note")
+#' @param H.rotate Optional argument. Select columns to rotate the header's text.
+#' @param B.rotate Optional argument. Select columns to rotate the body's text.
+#' @param savename Optional argument. Saves the table in .docx format in the working space. The argument must be in quotes.
 #'
 #' @import rempsyc flextable export officer stringr dplyr tidyr
 #' @return
@@ -25,24 +27,24 @@
 #' @examples
 #' # Tableau "simple"
 #' df<-data.frame("Variables" = c(1,2,3),
-#'                "Moyenne" = c(32,22,15),
-#'                "ET" = c(0.2,0.8,0.4))
+#'                "Mean" = c(32,22,15),
+#'                "SD" = c(0.2,0.8,0.4))
 #'
-#' TableFun(df, header = "Moyenne et ecart-type des 3 variables",foot.note.header = c(3,"a","ET = Ecart-type"))
+#' TableFun(df, header = "Mean and sd",foot.note.header = c(3,"a","SD = Standard deviation"))
 #'
 #' # Tableau avec plusieurs niveaux de noms de colonnes
 #'
 #' df<-data.frame("Variables" = c(1,2,3),
-#'                "T1_Moyenne" = c(32,22,15),
-#'                "T1_ET" = c(0.2,0.8,0.4),
-#'                "T2_Moyenne" = c(30,24,18),
-#'                "T2_ET" = c(0.3,0.5,0.6))
+#'                "T1_Mean" = c(32,22,15),
+#'                "T1_SD" = c(0.2,0.8,0.4),
+#'                "T2_Mean" = c(30,24,18),
+#'                "T2_SD" = c(0.3,0.5,0.6))
 #'
-#' TableFun(df,header = "Moyennes et Ecarts-types à 2 temps de mesure", foot.note.header = c(3,"a","ET = Ecart-type"))
+#' TableFun(df,header = "Mean and sd across 2 times points", foot.note.header = c(3,"a","ET = Standard deviation"))
 #'
 #'
-TableFun <- function(df, header, digits = 2, left.align = NULL,right.align = NULL, top.align = NULL, bottom.align = NULL, merge.col = NULL, footer = NULL, foot.note.header = NULL, foot.note.body = NULL, mathsymbols = NULL, savename = NULL){
-  x<-flextable(df %>% mutate(across(where(is.numeric), round, digits))) %>%
+TableFun <- function(df, header, digits = 2, left.align = NULL,right.align = NULL, top.align = NULL, bottom.align = NULL, merge.col = NULL, first_col.header = NULL, footer = NULL, foot.note.header = NULL, foot.note.body = NULL, H.rotate = NULL, B.rotate = NULL, savename = NULL){
+  x<-flextable(df) %>%
     separate_header() %>%
     autofit() %>%
     fontsize(part = "all", size = 11) %>%
@@ -75,10 +77,6 @@ TableFun <- function(df, header, digits = 2, left.align = NULL,right.align = NUL
 
   if(!missing(merge.col)){
     x<-merge_v(x, j = merge.col, combine = TRUE)
-  }
-
-  if(!missing(mathsymbols)){
-    x<-compose(x, i=as.double(mathsymbols[1]), j = c(mathsymbols[2]), part = mathsymbols[3], value = as_paragraph(as_equation(mathsymbols[4])))
   }
 
   if(!missing(footer) | !missing(foot.note.header) | !missing(foot.note.body)){
@@ -126,10 +124,26 @@ TableFun <- function(df, header, digits = 2, left.align = NULL,right.align = NUL
   }
 
   if(!missing(right.align)){
-    x<-align(x,j = c(right.align), part = "body", align = "left")
+    x<-align(x,j = c(right.align), part = "body", align = "right")
+  }
+
+  if(!missing(H.rotate)){
+    x <- rotate(x, j = c(H.rotate), rotation = "tbrl", part = "header")
+  }
+
+  if(!missing(B.rotate)){
+    x <- rotate(x, j = c(B.rotate), rotation = "tbrl", part = "body")
   }
 
   x<-fix_border_issues(x,part = "all")
+
+  if(!missing(first_col.header)){
+    x<-as_grouped_data(x, groups = c(colnames(x[c(1)]))) %>%
+      align(.,j = c(1), part = "body", align = "right") %>%
+      merge_h(., i = c(1:2), part = "header")
+  }
+
+
 
   if(!missing(savename)){
     save_as_docx(x, path = str_c(savename,".docx"))
