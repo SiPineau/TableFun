@@ -13,7 +13,7 @@ TableFun(
   top.align = NULL,
   bottom.align = NULL,
   merge.col = NULL,
-  first_col.header = NULL,
+  first_col.header = FALSE,
   footer = NULL,
   foot.note.header = NULL,
   foot.note.body = NULL,
@@ -41,6 +41,8 @@ TableFun(
 
 \item{merge.col}{Optional argument. Merges adjacent similar rows of specified columns.}
 
+\item{first_col.header}{Add a new row in body table for each level of first column.}
+
 \item{footer}{Optional argument. Inserts a general table footnote. The argument must be in quotes.}
 
 \item{foot.note.header}{Optional argument. Inserts a specific note attached to a column title. This argument must be a vector composed of: the column number, the "letter" associated with the note, and the "specific note": c(1, "a", "specific note"). Several specific notes can be added as follow: c(1, "a", "specific note1", 2, "b", "specific note2").}
@@ -51,9 +53,9 @@ TableFun(
 
 \item{B.rotate}{Optional argument. Select columns to rotate the body's text.}
 
-\item{col.bg.color}{Optional argument. Add a color to the background of selected rows This argument must be a vector composed of: row's number, "color code", part of the table affected ("header" / "body" / "all").}
-
 \item{savename}{Optional argument. Saves the table in .docx format in the working space. The argument must be in quotes.}
+
+\item{col.bg.color/row.bg.color}{Optional argument. Add a color to the background of selected columns/row. This argument must be a vector composed of: column's/row's number, "color code", part of the table affected ("header" / "body" / "all").}
 }
 \description{
 Create an APA norme table.
