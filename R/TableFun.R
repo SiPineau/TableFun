@@ -48,7 +48,31 @@
 TableFun <- function(df, header, digits = 2, left.align = NULL,right.align = NULL, top.align = NULL, bottom.align = NULL, merge.col = NULL, first_col.header = NULL, footer = NULL, foot.note.header = NULL, foot.note.body = NULL, H.rotate = NULL, B.rotate = NULL, col.bg.color = NULL, row.bg.color = NULL, savename = NULL){
   x<-flextable(df) %>%
     separate_header() %>%
-    autofit()
+    autofit() %>%
+    fontsize(part = "all", size = 11) %>%
+    add_header_lines(header) %>%
+    italic(i = 1, part = "header") %>%
+    hline_top(part = "header",
+              border = fp_border(color = "black",
+                                 width = 0,
+                                 style = "solid")) %>%
+    hline(i = c(1,2),
+          part = "header",
+          border = fp_border(color = "black",
+                             width = 0.25,
+                             style = "solid")) %>%
+    hline_top(part = "body",
+              border = fp_border(color = "black",
+                                 width = 0.25,
+                                 style = "solid")) %>%
+    hline_bottom(part = "body",
+                 border = fp_border(color = "black",
+                                    width = 0.25,
+                                    style = "solid")) %>%
+
+    align(part = "all", align = "center") %>%
+    align(i = 1, part = "header", align = "left") %>%
+    align(i = 1, part = "footer", align = "left")
 
   if(!missing(merge.col)){
     x<-merge_v(x, j = merge.col, combine = TRUE)
@@ -123,32 +147,6 @@ TableFun <- function(df, header, digits = 2, left.align = NULL,right.align = NUL
   if(!missing(row.bg.color)){
     bg(ft_1, i = row.bg.color[-length(row.bg.color)-2], bg = row.bg.color[length(row.bg.color)-1], part = row.bg.color[length(row.bg.color)])
   }
-
-x <- x %>%
-  fontsize(part = "all", size = 11) %>%
-    add_header_lines(header) %>%
-    italic(i = 1, part = "header") %>%
-    hline_top(part = "header",
-              border = fp_border(color = "black",
-                                 width = 0,
-                                 style = "solid")) %>%
-    hline(i = c(1,2),
-          part = "header",
-          border = fp_border(color = "black",
-                             width = 0.25,
-                             style = "solid")) %>%
-    hline_top(part = "body",
-              border = fp_border(color = "black",
-                                 width = 0.25,
-                                 style = "solid")) %>%
-    hline_bottom(part = "body",
-                 border = fp_border(color = "black",
-                                    width = 0.25,
-                                    style = "solid")) %>%
-
-    align(part = "all", align = "center") %>%
-    align(i = 1, part = "header", align = "left") %>%
-    align(i = 1, part = "footer", align = "left")
 
 x <- fix_border_issues(x,part = "all")
 
