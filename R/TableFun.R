@@ -19,6 +19,8 @@
 #' @param foot.note.body Optional argument. Inserts a specific note attached to a cell in the body of the table. The argument is written the same way as foot.note.header by adding the row number after the column number: c(1, 1, "a", "specific note")
 #' @param H.rotate Optional argument. Select columns to rotate the header's text.
 #' @param B.rotate Optional argument. Select columns to rotate the body's text.
+#' @param col.bg.color Optional argument. Add a color to the background of selected columns. This argument must be a vector composed of: column's number, "color code", part of the table affected ("header" / "body" / "all").
+#' @param row.bg.color Optional argument. Add a color to the background of selected rows This argument must be a vector composed of: row's number, "color code", part of the table affected ("header" / "body" / "all").
 #' @param savename Optional argument. Saves the table in .docx format in the working space. The argument must be in quotes.
 #'
 #' @import rempsyc flextable export officer stringr dplyr tidyr
@@ -43,37 +45,10 @@
 #' TableFun(df,header = "Mean and sd across 2 times points", foot.note.header = c(3,"a","ET = Standard deviation"))
 #'
 #'
-TableFun <- function(df, header, digits = 2, left.align = NULL,right.align = NULL, top.align = NULL, bottom.align = NULL, merge.col = NULL, first_col.header = NULL, footer = NULL, foot.note.header = NULL, foot.note.body = NULL, H.rotate = NULL, B.rotate = NULL, savename = NULL){
+TableFun <- function(df, header, digits = 2, left.align = NULL,right.align = NULL, top.align = NULL, bottom.align = NULL, merge.col = NULL, first_col.header = NULL, footer = NULL, foot.note.header = NULL, foot.note.body = NULL, H.rotate = NULL, B.rotate = NULL, col.bg.color = NULL, row.bg.color = NULL, savename = NULL){
   x<-flextable(df) %>%
     separate_header() %>%
-    autofit() %>%
-    fontsize(part = "all", size = 11) %>%
-    add_header_lines(header) %>%
-    italic(i = 1, part = "header") %>%
-    hline_top(part = "header",
-              border = fp_border(color = "black",
-                                 width = 0,
-                                 style = "solid")) %>%
-    hline(i = c(1,2),
-          part = "header",
-          border = fp_border(color = "black",
-                             width = 0.25,
-                             style = "solid")) %>%
-    hline_top(part = "body",
-              border = fp_border(color = "black",
-                                 width = 0.25,
-                                 style = "solid")) %>%
-    hline_bottom(part = "body",
-                 border = fp_border(color = "black",
-                                    width = 0.25,
-                                    style = "solid")) %>%
-
-    align(part = "all", align = "center") %>%
-    align(i = 1, part = "header", align = "left") %>%
-    align(i = 1, part = "footer", align = "left")
-
-
-
+    autofit()
 
   if(!missing(merge.col)){
     x<-merge_v(x, j = merge.col, combine = TRUE)
@@ -128,14 +103,12 @@ TableFun <- function(df, header, digits = 2, left.align = NULL,right.align = NUL
   }
 
   if(!missing(H.rotate)){
-    x <- rotate(x, i = c(-1),  j = c(H.rotate), rotation = "btlr", part = "header")
+    x <- rotate(x,  j = c(H.rotate[-length(H.rotate)]), rotation = H.rotate[length(H.rotate)], part = "header")
   }
 
   if(!missing(B.rotate)){
-    x <- rotate(x, j = c(B.rotate), rotation = "btlr", part = "body")
+    x <- rotate(x, j = c(B.rotate[-length(B.rotate)]), rotation = B.rotate[length(B.rotate)], part = "body")
   }
-
-  x<-fix_border_issues(x,part = "all")
 
   if(!missing(first_col.header)){
     x<-as_grouped_data(x, groups = c(colnames(x[c(1)]))) %>%
@@ -143,7 +116,41 @@ TableFun <- function(df, header, digits = 2, left.align = NULL,right.align = NUL
       merge_h(., i = c(1:2), part = "header")
   }
 
+  if(!missing(col.bg.color)){
+    bg(ft_1, j = col.cocol.bg.colorlor[-length(col.bg.color)-2], bg = col.bg.color[length(col.bg.color)-1], part = col.bg.color[length(col.bg.color)])
+  }
 
+  if(!missing(row.bg.color)){
+    bg(ft_1, i = row.bg.color[-length(row.bg.color)-2], bg = row.bg.color[length(row.bg.color)-1], part = row.bg.color[length(row.bg.color)])
+  }
+
+x <- x %>%
+  fontsize(part = "all", size = 11) %>%
+    add_header_lines(header) %>%
+    italic(i = 1, part = "header") %>%
+    hline_top(part = "header",
+              border = fp_border(color = "black",
+                                 width = 0,
+                                 style = "solid")) %>%
+    hline(i = c(1,2),
+          part = "header",
+          border = fp_border(color = "black",
+                             width = 0.25,
+                             style = "solid")) %>%
+    hline_top(part = "body",
+              border = fp_border(color = "black",
+                                 width = 0.25,
+                                 style = "solid")) %>%
+    hline_bottom(part = "body",
+                 border = fp_border(color = "black",
+                                    width = 0.25,
+                                    style = "solid")) %>%
+
+    align(part = "all", align = "center") %>%
+    align(i = 1, part = "header", align = "left") %>%
+    align(i = 1, part = "footer", align = "left")
+
+x <- fix_border_issues(x,part = "all")
 
   if(!missing(savename)){
     save_as_docx(x, path = str_c(savename,".docx"))
@@ -151,3 +158,7 @@ TableFun <- function(df, header, digits = 2, left.align = NULL,right.align = NUL
   }
   return(x)
 }
+
+
+
+

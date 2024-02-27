@@ -19,6 +19,8 @@ TableFun(
   foot.note.body = NULL,
   H.rotate = NULL,
   B.rotate = NULL,
+  col.bg.color = NULL,
+  row.bg.color = NULL,
   savename = NULL
 )
 }
@@ -48,6 +50,8 @@ TableFun(
 \item{H.rotate}{Optional argument. Select columns to rotate the header's text.}
 
 \item{B.rotate}{Optional argument. Select columns to rotate the body's text.}
+
+\item{col.bg.color}{Optional argument. Add a color to the background of selected rows This argument must be a vector composed of: row's number, "color code", part of the table affected ("header" / "body" / "all").}
 
 \item{savename}{Optional argument. Saves the table in .docx format in the working space. The argument must be in quotes.}
 }
