@@ -14,28 +14,27 @@
 #' @param top.align Optional argument. Aligns the information in the body of the table at the top.
 #' @param bottom.align Optional argument. Aligns the information in the body of the table at the bottom.
 #' @param merge.col Optional argument. Merges adjacent similar rows of specified columns.
-#' @param first_col.header Add a new row in body table for each level of first column.
 #' @param footer Optional argument. Inserts a general table footnote. The argument must be in quotes.
 #' @param foot.note.header Optional argument. Inserts a specific note attached to a column title. This argument must be a vector composed of: the column number, the "letter" associated with the note, and the "specific note": c(1, "a", "specific note"). Several specific notes can be added as follow: c(1, "a", "specific note1", 2, "b", "specific note2").
 #' @param foot.note.body Optional argument. Inserts a specific note attached to a cell in the body of the table. The argument is written the same way as foot.note.header by adding the row number after the column number: c(1, 1, "a", "specific note")
 #' @param H.rotate Optional argument. Select columns to rotate the header's text.
 #' @param B.rotate Optional argument. Select columns to rotate the body's text.
 #' @param col.bg.color/row.bg.color Optional argument. Add a color to the background of selected columns/row. This argument must be a vector composed of: column's/row's number, "color code", part of the table affected ("header" / "body" / "all").
-#'
+#' @param spread_col Optional argument. Spread one column values as row separator based on an other character column. This argument must be a vector composed of: "column name to be spread", "column name to be separate", postition of spreaded column value : "center" / "left"
 #' @param savename Optional argument. Saves the table in .docx format in the working space. The argument must be in quotes.
 #'
-#' @import rempsyc flextable export officer stringr dplyr tidyr
+#' @import rempsyc flextable export officer stringr dplyr tidyr rlang
 #' @return
 #' @export
 #' @examples
-#' # Tableau "simple"
+#' # Simple table
 #' df<-data.frame("Variables" = c(1,2,3),
 #'                "Mean" = c(32,22,15),
 #'                "SD" = c(0.2,0.8,0.4))
 #'
 #' TableFun(df, header = "Mean and sd",foot.note.header = c(3,"a","SD = Standard deviation"))
 #'
-#' # Tableau avec plusieurs niveaux de noms de colonnes
+#' # Multiple colmuns names level
 #'
 #' df<-data.frame("Variables" = c(1,2,3),
 #'                "T1_Mean" = c(32,22,15),
@@ -45,24 +44,68 @@
 #'
 #' TableFun(df,header = "Mean and sd across 2 times points", foot.note.header = c(3,"a","ET = Standard deviation"))
 #'
+#' # Spreaded column
 #'
-TableFun <- function(df, header, digits = 2, left.align = NULL,right.align = NULL, top.align = NULL, bottom.align = NULL, merge.col = NULL, first_col.header = FALSE, footer = NULL, foot.note.header = NULL, foot.note.body = NULL, H.rotate = NULL, B.rotate = NULL, col.bg.color = NULL, row.bg.color = NULL, savename = NULL){
+#' df<-data.frame("Variables" = c(1,2,3),
+#'                "T1_Mean" = c(32,22,15),
+#'                "T1_SD" = c(0.2,0.8,0.4),
+#'                "T2_Mean" = c(30,24,18),
+#'                "T2_SD" = c(0.3,0.5,0.6))
+#'
+#' df <- reshape(df, varying = c(2:5), idvar = "Variables", sep = "_", timevar = "ind", direction = "long") %>% arrange(Variables)
+#'
+#' TableFun(df,header = "Mean and sd across 2 times points", spread_col = c("Variables", "ind", "left"))
+
+
+TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NULL, top.align = NULL, bottom.align = NULL, merge.col = NULL, footer = NULL, foot.note.header = NULL, foot.note.body = NULL, H.rotate = NULL, B.rotate = NULL, col.bg.color = NULL, row.bg.color = NULL, spread_col = NULL, savename = NULL){
 
   df <- df %>%
     mutate_if(is.numeric, round, digits = digits)
 
-  if(first_col.header == TRUE){
-    x<-as_grouped_data(df, groups = c(colnames(df[c(1)]))) %>%
-      flextable() %>%
-      separate_header() %>%
-      autofit() %>%
-      align(.,j = c(1), part = "body", align = "right") %>%
-      merge_h(., i = c(1:2), part = "body")
-  }else{
-    x<-flextable(df) %>%
-      separate_header() %>%
-      autofit()
+  if(!missing(spread_col)){
+    if(length(spread_col)<3){
+      stop("Missing argument in 'spread_col'")
+    }
+      namevar <- spread_col[c(1,2)]
+      indexvar <- match(namevar, names(df))
+
+      nbv<-data.frame(table(df[,indexvar[1]]))
+
+      nbcol <- ncol(df)
+
+      for (v in 1:nrow(nbv)) {
+        if(v == 1){
+          tmp <- rbind(rep(as.character(nbv[v,1]), nbcol), df %>% filter(!!sym(namevar[1]) == nbv[v,1]))
+        }else{
+          tmp[c((nrow(tmp)+1):((nrow(tmp)+1)+nbv[v,2])),] <- rbind(rep(as.character(nbv[v,1]), nbcol), df %>% filter(!!sym(namevar[1]) == nbv[v,1]))
+        }
+      }
+
+      Newnbv <- data.frame(table(tmp[,indexvar[1]]))
+
+      for (v in 1:nrow(Newnbv)) {
+        if(v == 1){
+          newrow <- c(1)
+        }else{
+          newrow <- c(newrow,(Newnbv[v,2]+newrow[(v-1)]))
+        }
+      }
+
+      if(spread_col[3] == "center"){
+        firstj <- 1
+      }
+
+      if(spread_col[3] == "left"){
+        firstj <- 2
+      }
+      df <- tmp %>%
+        select(- !!sym(namevar[1])) %>%
+        rename(!!sym(namevar[1]) := !!sym(namevar[2]))
+
   }
+  x<-flextable(df) %>%
+    separate_header() %>%
+    autofit()
 
   if(!missing(merge.col)){
     x<-merge_v(x, j = merge.col, combine = TRUE)
@@ -123,6 +166,7 @@ TableFun <- function(df, header, digits = 2, left.align = NULL,right.align = NUL
                                     style = "solid")) %>%
 
     align(part = "all", align = "center") %>%
+    valign(j = 1, valign = "top", part = "header") %>%
     align(i = 1, part = "header", align = "left") %>%
     align(i = 1, part = "footer", align = "left")
 
@@ -156,6 +200,15 @@ TableFun <- function(df, header, digits = 2, left.align = NULL,right.align = NUL
 
   if(!missing(row.bg.color)){
     x<-bg(x, i = c(as.integer(row.bg.color[1:(length(row.bg.color)-2)])), bg = row.bg.color[length(row.bg.color)-1], part = row.bg.color[length(row.bg.color)])
+  }
+
+  if(!missing(spread_col)){
+    x <- x %>%
+      merge_h(., i = c(newrow), part = "body") %>%
+      align(part = "body", align = "left") %>%
+      align(i = c(1:nrow(tmp)), j = c(firstj:(nbcol-1)), part = "body", align = "center") %>%
+      align(i = setdiff(c(1:nrow(tmp)), newrow), j = 1, part = "body", align = "left") %>%
+      prepend_chunks(i = setdiff(c(1:nrow(tmp)), newrow), j = namevar[1], as_chunk("\t"), part = "body")
   }
 
 x <- fix_border_issues(x,part = "all")
