@@ -6,7 +6,7 @@
 #'@description
 #'Create an APA norme table.
 #'
-#' @param df A dataset (dataframe).
+#' @param df A dataframe.
 #' @param header Name of the table in quotes.
 #' @param digits Number of decimal places in the table. By default digits = 2.
 #' @param left.align Optional argument. Aligns the information in the body of the table to the left.

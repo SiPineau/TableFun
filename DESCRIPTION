@@ -7,7 +7,7 @@ Maintainer: Simon Pineau <simon.pineau@u-bordeaux.fr>
 Description: Permet de créer des tableaux aux norme APA à partir de dataframe.
 License: GPL-3
 Encoding: UTF-8
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 Imports: 
     dplyr,
     export,

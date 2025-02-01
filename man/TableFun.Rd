@@ -13,7 +13,6 @@ TableFun(
   top.align = NULL,
   bottom.align = NULL,
   merge.col = NULL,
-  first_col.header = FALSE,
   footer = NULL,
   foot.note.header = NULL,
   foot.note.body = NULL,
@@ -21,11 +20,12 @@ TableFun(
   B.rotate = NULL,
   col.bg.color = NULL,
   row.bg.color = NULL,
+  spread_col = NULL,
   savename = NULL
 )
 }
 \arguments{
-\item{df}{A dataset (dataframe).}
+\item{df}{A dataframe.}
 
 \item{header}{Name of the table in quotes.}
 
@@ -41,8 +41,6 @@ TableFun(
 
 \item{merge.col}{Optional argument. Merges adjacent similar rows of specified columns.}
 
-\item{first_col.header}{Add a new row in body table for each level of first column.}
-
 \item{footer}{Optional argument. Inserts a general table footnote. The argument must be in quotes.}
 
 \item{foot.note.header}{Optional argument. Inserts a specific note attached to a column title. This argument must be a vector composed of: the column number, the "letter" associated with the note, and the "specific note": c(1, "a", "specific note"). Several specific notes can be added as follow: c(1, "a", "specific note1", 2, "b", "specific note2").}
@@ -53,6 +51,8 @@ TableFun(
 
 \item{B.rotate}{Optional argument. Select columns to rotate the body's text.}
 
+\item{spread_col}{Optional argument. Spread one column values as row separator based on an other character column. This argument must be a vector composed of: "column name to be spread", "column name to be separate", postition of spreaded column value : "center" / "left"}
+
 \item{savename}{Optional argument. Saves the table in .docx format in the working space. The argument must be in quotes.}
 
 \item{col.bg.color/row.bg.color}{Optional argument. Add a color to the background of selected columns/row. This argument must be a vector composed of: column's/row's number, "color code", part of the table affected ("header" / "body" / "all").}
@@ -61,14 +61,14 @@ TableFun(
 Create an APA norme table.
 }
 \examples{
-# Tableau "simple"
+# Simple table
 df<-data.frame("Variables" = c(1,2,3),
                "Mean" = c(32,22,15),
                "SD" = c(0.2,0.8,0.4))
 
 TableFun(df, header = "Mean and sd",foot.note.header = c(3,"a","SD = Standard deviation"))
 
-# Tableau avec plusieurs niveaux de noms de colonnes
+# Multiple colmuns names level
 
 df<-data.frame("Variables" = c(1,2,3),
                "T1_Mean" = c(32,22,15),
@@ -78,7 +78,17 @@ df<-data.frame("Variables" = c(1,2,3),
 
 TableFun(df,header = "Mean and sd across 2 times points", foot.note.header = c(3,"a","ET = Standard deviation"))
 
+# Spreaded column
 
+df<-data.frame("Variables" = c(1,2,3),
+               "T1_Mean" = c(32,22,15),
+               "T1_SD" = c(0.2,0.8,0.4),
+               "T2_Mean" = c(30,24,18),
+               "T2_SD" = c(0.3,0.5,0.6))
+
+df <- reshape(df, varying = c(2:5), idvar = "Variables", sep = "_", timevar = "ind", direction = "long") \%>\% arrange(Variables)
+
+TableFun(df,header = "Mean and sd across 2 times points", spread_col = c("Variables", "ind", "left"))
 }
 \author{
 Simon Pineau
