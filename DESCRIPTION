@@ -1,10 +1,10 @@
 Package: TableFun
 Type: Package
 Title: TableFun
-Version: 0.1.2
+Version: 1.0
 Author: Simon Pineau
 Maintainer: Simon Pineau <simon.pineau@u-bordeaux.fr>
-Description: Permet de créer des tableaux aux norme APA à partir de dataframe.
+Description: Create APA tables for dataframe, exportable in .docx documents.
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.3.2
