@@ -202,22 +202,28 @@ TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NU
   }
 
   if(!missing(spread_col)){
-    newrowborder <- newrow
-    for (v in 2:length(newrow)) {
-      newrowborder[(length(newrowborder)+1)] <- (newrow[v] - 1)
-    }
+
 
     x <- x %>%
       merge_h(., i = c(newrow), part = "body") %>%
       align(part = "body", align = "left") %>%
       align(i = c(1:nrow(tmp)), j = c(firstj:(nbcol-1)), part = "body", align = "center") %>%
       align(i = setdiff(c(1:nrow(tmp)), newrow), j = 1, part = "body", align = "left") %>%
-      prepend_chunks(i = setdiff(c(1:nrow(tmp)), newrow), j = namevar[2], as_chunk("\t"), part = "body") %>%
-      hline(i = newrowborder,
-            part = "body",
-            border = fp_border(color = "black",
-                               width = 0.25,
-                               style = "solid"))
+      prepend_chunks(i = setdiff(c(1:nrow(tmp)), newrow), j = namevar[2], as_chunk("\t"), part = "body")
+
+    if(spread_col[3] == "center"){
+      newrowborder <- newrow
+      for (v in 2:length(newrow)) {
+        newrowborder[(length(newrowborder)+1)] <- (newrow[v] - 1)
+      }
+
+      x <- x %>%
+        hline(i = newrowborder,
+              part = "body",
+              border = fp_border(color = "black",
+                                 width = 0.25,
+                                 style = "solid"))
+    }
   }
 
 x <- fix_border_issues(x,part = "all")
