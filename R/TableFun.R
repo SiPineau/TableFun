@@ -166,7 +166,7 @@ TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NU
                                     style = "solid")) %>%
 
     align(part = "all", align = "center") %>%
-    valign(j = c(1:length(x$header$col_keys)), valign = "top", part = "header") %>%
+    valign(j = setdiff(c(1:length(x$col_keys)), which(grepl("[_\\.]", x$col_keys))), valign = "top", part = "header") %>%
     align(i = 1, part = "header", align = "left") %>%
     align(i = 1, part = "footer", align = "left")
 
