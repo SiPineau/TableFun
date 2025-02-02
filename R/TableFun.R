@@ -166,7 +166,7 @@ TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NU
                                     style = "solid")) %>%
 
     align(part = "all", align = "center") %>%
-    valign(j = 1, valign = "top", part = "header") %>%
+    valign(j = c(1:length(x$header$col_keys)), valign = "top", part = "header") %>%
     align(i = 1, part = "header", align = "left") %>%
     align(i = 1, part = "footer", align = "left")
 
