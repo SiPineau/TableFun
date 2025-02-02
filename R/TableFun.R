@@ -32,7 +32,7 @@
 #'                "Mean" = c(32,22,15),
 #'                "SD" = c(0.2,0.8,0.4))
 #'
-#' TableFun(df, header = "Mean and sd",foot.note.header = c(3,"a","SD = Standard deviation"))
+#' TableFun(df, header = "Mean and sd", foot.note.header = c(3,"a","SD = Standard deviation"))
 #'
 #' # Multiple colmuns names level
 #'
