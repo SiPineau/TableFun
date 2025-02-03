@@ -109,7 +109,7 @@ TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NU
         firstj <- 2
       }
 
-      if(length(colnames(df1[,c(namevar)])[sapply(df1[,c(namevar)], is.factor)]) > 1){
+      if(length(colnames(df[,c(namevar)])[sapply(df[,c(namevar)], is.factor)]) > 1){
         tmp[,namevar[2]] <- paste(tmp[,namevar[1]], tmp[,namevar[2]], sep="_")
         for (lvl1 in 1:length(fctlvl[[1]])) {
           for (lvl2 in 1:length(fctlvl[[2]])) {
