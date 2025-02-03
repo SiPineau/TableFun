@@ -68,7 +68,7 @@ TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NU
     }
       namevar <- spread_col[c(1,2)]
 
-      if(length(colnames(df[,c(namevar)])[sapply(df[,c(namevar)], is.factor)]) > 0){
+      if(length(colnames(df[,c(namevar)])[sapply(df[,c(namevar)], is.factor)]) > 1){
         fctvar <- colnames(df[,c(namevar)])[sapply(df[,c(namevar)], is.factor)]
         fctlvl <- sapply(df[,c(fctvar)], levels)
 
