@@ -130,13 +130,13 @@ TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NU
 
         tmp <- tmp %>% arrange(!!sym(namevar[1]))
 
-        df <- tmp %>% separate(!!sym(namevar[2]), c("Vartodelete", namevar[2]), sep = "_") %>%
-          select(- !!sym(namevar[1]), -Vartodelete)
+        tmp <- tmp %>% separate(!!sym(namevar[2]), c("Vartodelete", namevar[2]), sep = "_") %>%
+          select(-Vartodelete)
       }
 
-      df <- tmp %>% separate(!!sym(namevar[2]), c("Vartodelete", namevar[2]), sep = "_") %>%
-        select(- !!sym(namevar[1]), -Vartodelete) %>%
-        rename(namevar[1] = namevar[2])
+      df1 <- tmp  %>%
+        select(-!!sym(namevar[1])) %>%
+        rename(!!sym(namevar[1]) := !!sym(namevar[2]))
 
   }
   x<-flextable(df) %>%
