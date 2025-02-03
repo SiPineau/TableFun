@@ -121,14 +121,23 @@ TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NU
         }
       }
 
-      tmp[,namevar[2]] <- factor(tmp[,namevar[2]], levels = c(newfctlvl))
+      lvl1seq <- seq(from = 1, to = length(unique(df[,namevar[1]]))*length(unique(df[,namevar[2]])), by = length(unique(df[,namevar[2]])))
+      for (lvl1 in lvl1seq) {
+        if(lvl1 == 1){
+          v <- 1
+          newfctlvl1 <- c(paste(fctlvl[[1]][v], fctlvl[[1]][v], sep = "_"), newfctlvl[1:(lvl1seq[2]-1)])
+        }else if(lvl1>1 & max(lvl1seq)>lvl1){
+          v <- v + 1
+          newfctlvl1<- c(newfctlvl1, paste(fctlvl[[1]][v], fctlvl[[1]][v], sep = "_"), newfctlvl[lvl1:(lvl1seq[(v+1)]-1)])
+        }else if(lvl1==max(lvl1seq)){
+          v <- v + 1
+          newfctlvl1<- c(newfctlvl1, paste(fctlvl[[1]][v], fctlvl[[1]][v], sep = "_"), newfctlvl[lvl1:length(newfctlvl)])
+        }
+      }
 
-      tmp <- tmp %>% data.frame(., check.names = F) %>% mutate(!!sym(namevar[2]) := case_when(!!sym(namevar[2]) := is.na(!!sym(namevar[2])) ~ paste(!!sym(namevar[1]), !!sym(namevar[1]), sep = "_"),
-                                                                                              .default = !!sym(namevar[2])))
+      tmp[,namevar[2]] <- factor(tmp[,namevar[2]], levels = newfctlvl1)
 
-      tmp[,namevar[1]] <- factor(tmp[,namevar[1]], levels = c(fctlvl[[1]]))
-
-      tmp <- tmp %>% arrange(!!sym(namevar[1]))
+      tmp <- tmp %>% arrange(!!sym(namevar[2]))
 
       tmp <- tmp %>% separate(!!sym(namevar[2]), c("Vartodelete", namevar[2]), sep = "_") %>%
         select(-Vartodelete)
