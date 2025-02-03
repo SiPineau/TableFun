@@ -59,7 +59,7 @@
 
 TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NULL, top.align = NULL, bottom.align = NULL, merge.col = NULL, footer = NULL, foot.note.header = NULL, foot.note.body = NULL, H.rotate = NULL, B.rotate = NULL, col.bg.color = NULL, row.bg.color = NULL, spread_col = NULL, savename = NULL){
 
-  df <- df %>%
+  df <- df %>% data.frame(., check.names = F) %>%
     mutate_if(is.numeric, round, digits = digits)
 
   if(!missing(spread_col)){
@@ -67,6 +67,16 @@ TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NU
       stop("Missing argument in 'spread_col'")
     }
       namevar <- spread_col[c(1,2)]
+
+      if(length(colnames(df[,c(namevar)])[sapply(df[,c(namevar)], is.factor)]) > 0){
+        fctvar <- colnames(df[,c(namevar)])[sapply(df[,c(namevar)], is.factor)]
+        fctlvl <- sapply(df[,c(fctvar)], levels)
+
+        for (f in 1:length(fctvar)) {
+          df[,fctvar[f]] <- as.character(df[,fctvar[f]])
+        }
+      }
+
       indexvar <- match(namevar, names(df))
 
       nbv<-data.frame(table(df[,indexvar[1]]))
@@ -98,9 +108,34 @@ TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NU
       if(spread_col[3] == "left"){
         firstj <- 2
       }
-      df <- tmp %>%
-        select(- !!sym(namevar[1])) %>%
-        rename(!!sym(namevar[1]) := !!sym(namevar[2]))
+
+      if(!missing(fctlvl)){
+        tmp[,namevar[2]] <- paste(tmp[,namevar[1]], tmp[,namevar[2]], sep="_")
+        for (lvl1 in 1:length(fctlvl[[1]])) {
+          for (lvl2 in 1:length(fctlvl[[2]])) {
+            if(lvl1*lvl2 == 1){
+              newfctlvl <- paste(fctlvl[[1]][lvl1], fctlvl[[2]][lvl2], sep = "_")
+            }else{
+              newfctlvl[(length(newfctlvl)+1)] <- paste(fctlvl[[1]][lvl1], fctlvl[[2]][lvl2], sep = "_")
+            }
+          }
+        }
+
+        tmp[,namevar[2]] <- factor(tmp[,namevar[2]], levels = c(newfctlvl))
+
+        tmp <- tmp %>% data.frame(., check.names = F) %>% mutate(!!sym(namevar[2]) := case_when(!!sym(namevar[2]) := is.na(!!sym(namevar[2])) ~ paste(!!sym(namevar[1]), !!sym(namevar[1]), sep = "_"),
+                                                                                                .default = !!sym(namevar[2])))
+
+        tmp[,namevar[1]] <- factor(tmp[,namevar[1]], levels = c(fctlvl[[1]]))
+
+        tmp <- tmp %>% arrange(!!sym(namevar[1]))
+
+        df <- tmp %>% separate(!!sym(namevar[2]), c("Vartodelete", namevar[2]), sep = "_") %>%
+          select(- !!sym(namevar[1]), -Vartodelete)
+      }
+
+      df <- tmp %>% separate(!!sym(namevar[2]), c("Vartodelete", namevar[2]), sep = "_") %>%
+        select(- !!sym(namevar[1]), -Vartodelete)
 
   }
   x<-flextable(df) %>%
