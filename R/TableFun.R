@@ -66,79 +66,81 @@ TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NU
     if(length(spread_col)<3){
       stop("Missing argument in 'spread_col'")
     }
-      namevar <- spread_col[c(1,2)]
+    namevar <- spread_col[c(1,2)]
 
-      if(length(colnames(df[,c(namevar)])[sapply(df[,c(namevar)], is.factor)]) > 1){
-        fctvar <- colnames(df[,c(namevar)])[sapply(df[,c(namevar)], is.factor)]
-        fctlvl <- sapply(df[,c(fctvar)], levels)
+    if(length(colnames(df[,c(namevar)])[sapply(df[,c(namevar)], is.factor)]) > 1){
+      fctvar <- colnames(df[,c(namevar)])[sapply(df[,c(namevar)], is.factor)]
+      fctlvl <- sapply(df[,c(fctvar)], levels)
 
-        for (f in 1:length(fctvar)) {
-          df[,fctvar[f]] <- as.character(df[,fctvar[f]])
-        }
+      for (f in 1:length(fctvar)) {
+        df[,fctvar[f]] <- as.character(df[,fctvar[f]])
       }
+    }
 
-      indexvar <- match(namevar, names(df))
+    indexvar <- match(namevar, names(df))
 
-      nbv<-data.frame(table(df[,indexvar[1]]))
+    nbv<-data.frame(table(df[,indexvar[1]]))
 
-      nbcol <- ncol(df)
+    nbcol <- ncol(df)
 
-      for (v in 1:nrow(nbv)) {
-        if(v == 1){
-          tmp <- rbind(rep(as.character(nbv[v,1]), nbcol), df %>% filter(!!sym(namevar[1]) == nbv[v,1]))
-        }else{
-          tmp[c((nrow(tmp)+1):((nrow(tmp)+1)+nbv[v,2])),] <- rbind(rep(as.character(nbv[v,1]), nbcol), df %>% filter(!!sym(namevar[1]) == nbv[v,1]))
-        }
+    for (v in 1:nrow(nbv)) {
+      if(v == 1){
+        tmp <- rbind(rep(as.character(nbv[v,1]), nbcol), df %>% filter(!!sym(namevar[1]) == nbv[v,1]))
+      }else{
+        tmp[c((nrow(tmp)+1):((nrow(tmp)+1)+nbv[v,2])),] <- rbind(rep(as.character(nbv[v,1]), nbcol), df %>% filter(!!sym(namevar[1]) == nbv[v,1]))
       }
+    }
 
-      Newnbv <- data.frame(table(tmp[,indexvar[1]]))
+    Newnbv <- data.frame(table(tmp[,indexvar[1]]))
 
-      for (v in 1:nrow(Newnbv)) {
-        if(v == 1){
-          newrow <- c(1)
-        }else{
-          newrow <- c(newrow,(sum(Newnbv[c(1:(v-1)),2])+1))
-        }
+    for (v in 1:nrow(Newnbv)) {
+      if(v == 1){
+        newrow <- c(1)
+      }else{
+        newrow <- c(newrow,(sum(Newnbv[c(1:(v-1)),2])+1))
       }
+    }
 
-      if(spread_col[3] == "center"){
-        firstj <- 1
-      }
+    if(spread_col[3] == "center"){
+      firstj <- 1
+    }
 
-      if(spread_col[3] == "left"){
-        firstj <- 2
-      }
+    if(spread_col[3] == "left"){
+      firstj <- 2
+    }
 
-      if(length(colnames(df[,c(namevar)])[sapply(df[,c(namevar)], is.factor)]) > 1){
-        tmp[,namevar[2]] <- paste(tmp[,namevar[1]], tmp[,namevar[2]], sep="_")
-        for (lvl1 in 1:length(fctlvl[[1]])) {
-          for (lvl2 in 1:length(fctlvl[[2]])) {
-            if(lvl1*lvl2 == 1){
-              newfctlvl <- paste(fctlvl[[1]][lvl1], fctlvl[[2]][lvl2], sep = "_")
-            }else{
-              newfctlvl[(length(newfctlvl)+1)] <- paste(fctlvl[[1]][lvl1], fctlvl[[2]][lvl2], sep = "_")
-            }
+    if(length(colnames(df[,c(namevar)])[sapply(df[,c(namevar)], is.factor)]) > 1){
+      tmp[,namevar[2]] <- paste(tmp[,namevar[1]], tmp[,namevar[2]], sep="_")
+      for (lvl1 in 1:length(fctlvl[[1]])) {
+        for (lvl2 in 1:length(fctlvl[[2]])) {
+          if(lvl1*lvl2 == 1){
+            newfctlvl <- paste(fctlvl[[1]][lvl1], fctlvl[[2]][lvl2], sep = "_")
+          }else{
+            newfctlvl[(length(newfctlvl)+1)] <- paste(fctlvl[[1]][lvl1], fctlvl[[2]][lvl2], sep = "_")
           }
         }
-
-        tmp[,namevar[2]] <- factor(tmp[,namevar[2]], levels = c(newfctlvl))
-
-        tmp <- tmp %>% data.frame(., check.names = F) %>% mutate(!!sym(namevar[2]) := case_when(!!sym(namevar[2]) := is.na(!!sym(namevar[2])) ~ paste(!!sym(namevar[1]), !!sym(namevar[1]), sep = "_"),
-                                                                                                .default = !!sym(namevar[2])))
-
-        tmp[,namevar[1]] <- factor(tmp[,namevar[1]], levels = c(fctlvl[[1]]))
-
-        tmp <- tmp %>% arrange(!!sym(namevar[1]))
-
-        tmp <- tmp %>% separate(!!sym(namevar[2]), c("Vartodelete", namevar[2]), sep = "_") %>%
-          select(-Vartodelete)
       }
 
-      df1 <- tmp  %>%
-        select(-!!sym(namevar[1])) %>%
-        rename(!!sym(namevar[1]) := !!sym(namevar[2]))
+      tmp[,namevar[2]] <- factor(tmp[,namevar[2]], levels = c(newfctlvl))
+
+      tmp <- tmp %>% data.frame(., check.names = F) %>% mutate(!!sym(namevar[2]) := case_when(!!sym(namevar[2]) := is.na(!!sym(namevar[2])) ~ paste(!!sym(namevar[1]), !!sym(namevar[1]), sep = "_"),
+                                                                                              .default = !!sym(namevar[2])))
+
+      tmp[,namevar[1]] <- factor(tmp[,namevar[1]], levels = c(fctlvl[[1]]))
+
+      tmp <- tmp %>% arrange(!!sym(namevar[1]))
+
+      tmp <- tmp %>% separate(!!sym(namevar[2]), c("Vartodelete", namevar[2]), sep = "_") %>%
+        select(-Vartodelete)
+    }
 
   }
+
+  df <- tmp  %>%
+    select(-!!sym(namevar[1])) %>%
+    rename(!!sym(namevar[1]) := !!sym(namevar[2]))
+
+
   x<-flextable(df) %>%
     separate_header() %>%
     autofit()
@@ -261,7 +263,7 @@ TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NU
     }
   }
 
-x <- fix_border_issues(x,part = "all")
+  x <- fix_border_issues(x,part = "all")
 
   if(!missing(savename)){
     save_as_docx(x, path = str_c(savename,".docx"))
