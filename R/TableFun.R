@@ -68,7 +68,8 @@ TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NU
     }
     namevar <- spread_col[c(1,2)]
 
-    if(length(colnames(df[,c(namevar)])[sapply(df[,c(namevar)], is.factor)]) > 1){
+    nbfac <- length(colnames(df[,c(namevar)])[sapply(df[,c(namevar)], is.factor)])
+    if(nbfac > 1){
       fctvar <- colnames(df[,c(namevar)])[sapply(df[,c(namevar)], is.factor)]
       fctlvl <- sapply(df[,c(fctvar)], levels)
 
@@ -109,7 +110,7 @@ TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NU
       firstj <- 2
     }
 
-    if(length(colnames(df[,c(namevar)])[sapply(df[,c(namevar)], is.factor)]) > 1){
+    if(nbfac > 1){
       tmp[,namevar[2]] <- paste(tmp[,namevar[1]], tmp[,namevar[2]], sep="_")
       for (lvl1 in 1:length(fctlvl[[1]])) {
         for (lvl2 in 1:length(fctlvl[[2]])) {
