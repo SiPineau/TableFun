@@ -143,12 +143,10 @@ TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NU
         select(-Vartodelete)
     }
 
+    df <- tmp  %>%
+      select(-!!sym(namevar[1])) %>%
+      rename(!!sym(namevar[1]) := !!sym(namevar[2]))
   }
-
-  df <- tmp  %>%
-    select(-!!sym(namevar[1])) %>%
-    rename(!!sym(namevar[1]) := !!sym(namevar[2]))
-
 
   x<-flextable(df) %>%
     separate_header() %>%
