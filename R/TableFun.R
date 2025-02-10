@@ -21,6 +21,7 @@
 #' @param B.rotate Optional argument. Select columns to rotate the body's text.
 #' @param col.bg.color/row.bg.color Optional argument. Add a color to the background of selected columns/row. This argument must be a vector composed of: column's/row's number, "color code", part of the table affected ("header" / "body" / "all").
 #' @param spread_col Optional argument. Spread one column values as row separator based on an other character column. This argument must be a vector composed of: "column name to be spread", "column name to be separate", postition of spreaded column value : "center" / "left"
+#' @param adjtopage Optional argument. Allow to adjust columns width. This argument need a vector compose of page orientation (landscape/portait), does the first columns need to be bigger (TRUE/FALSE), ratio of first column size (as numeric), does space between line and text has to be remove set to 0 (TRUE/FALSE)
 #' @param savename Optional argument. Saves the table in .docx format in the working space. The argument must be in quotes.
 #'
 #' @import rempsyc flextable export officer stringr dplyr tidyr rlang
@@ -57,7 +58,7 @@
 #' TableFun(df,header = "Mean and sd across 2 times points", spread_col = c("Variables", "ind", "left"))
 
 
-TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NULL, top.align = NULL, bottom.align = NULL, merge.col = NULL, footer = NULL, foot.note.header = NULL, foot.note.body = NULL, H.rotate = NULL, B.rotate = NULL, col.bg.color = NULL, row.bg.color = NULL, spread_col = NULL, savename = NULL){
+TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NULL, top.align = NULL, bottom.align = NULL, merge.col = NULL, footer = NULL, foot.note.header = NULL, foot.note.body = NULL, H.rotate = NULL, B.rotate = NULL, col.bg.color = NULL, row.bg.color = NULL, spread_col = NULL, adjtopage = NULL, savename = NULL){
 
   df <- df %>% data.frame(., check.names = F) %>%
     mutate_if(is.numeric, round, digits = digits)
@@ -69,6 +70,7 @@ TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NU
     namevar <- spread_col[c(1,2)]
 
     nbfac <- length(colnames(df[,c(namevar)])[sapply(df[,c(namevar)], is.factor)])
+
     if(nbfac > 1){
       fctvar <- colnames(df[,c(namevar)])[sapply(df[,c(namevar)], is.factor)]
       fctlvl <- sapply(df[,c(fctvar)], levels)
@@ -135,19 +137,21 @@ TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NU
           newfctlvl1<- c(newfctlvl1, paste(fctlvl[[1]][v], fctlvl[[1]][v], sep = "_"), newfctlvl[lvl1:length(newfctlvl)])
         }
       }
-
       tmp[,namevar[2]] <- factor(tmp[,namevar[2]], levels = newfctlvl1)
 
       tmp <- tmp %>% arrange(!!sym(namevar[2]))
 
       tmp <- tmp %>% separate(!!sym(namevar[2]), c("Vartodelete", namevar[2]), sep = "_") %>%
         select(-Vartodelete)
+
     }
 
-    df <- tmp  %>%
-      select(-!!sym(namevar[1])) %>%
-      rename(!!sym(namevar[1]) := !!sym(namevar[2]))
   }
+
+  df <- tmp  %>%
+    select(-!!sym(namevar[1])) %>%
+    rename(!!sym(namevar[1]) := !!sym(namevar[2]))
+
 
   x<-flextable(df) %>%
     separate_header() %>%
@@ -269,9 +273,43 @@ TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NU
                                  width = 0.25,
                                  style = "solid"))
     }
+
+
+    if(spread_col[3] == "left"){
+      x <- x %>%
+        merge_none(., part = "body") %>%
+        compose(i = newrow, j = 2:length(x$col_keys), value = as_paragraph(NA), part = "body")
+    }
+
   }
 
   x <- fix_border_issues(x,part = "all")
+
+  if(!missing(adjtopage)){
+    if(adjtopage[1] == "landscape"){
+      totwidth <- 22
+    }else if(adjtopage[1] == "portrait"){
+      totwidth <- 16
+    }
+
+    width <- rep(totwidth/length(x$col_keys),length(x$col_keys))
+
+    if(adjtopage[2] == "TRUE"){
+      for (v in 1:length(width)){
+        if(v == 1){
+          width[v] <- width[v] + ((as.numeric(adjtopage[3])/100)*width[v])
+        }else{
+          width[v] <- width[v] - ((as.numeric(adjtopage[3])/100)*width[v])/(length(x$col_keys)-1)
+        }
+      }
+    }
+
+    x <- width(x, j = 1:length(x$col_keys), width = width, unit = "cm")
+    if(adjtopage[4] == "TRUE"){
+      x <- padding(x, padding = 0, part = "all")
+    }
+
+  }
 
   if(!missing(savename)){
     save_as_docx(x, path = str_c(savename,".docx"))
