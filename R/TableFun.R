@@ -21,7 +21,7 @@
 #' @param B.rotate Optional argument. Select columns to rotate the body's text.
 #' @param col.bg.color/row.bg.color Optional argument. Add a color to the background of selected columns/row. This argument must be a vector composed of: column's/row's number, "color code", part of the table affected ("header" / "body" / "all").
 #' @param spread_col Optional argument. Spread one column values as row separator based on an other character column. This argument must be a vector composed of: "column name to be spread", "column name to be separate", postition of spreaded column value : "center" / "left"
-#' @param adjtopage Optional argument. Allow to adjust columns width. This argument need a vector compose of page orientation (landscape/portait), does the first columns need to be bigger (TRUE/FALSE), ratio of first column size (as numeric), does space between line and text has to be remove set to 0 (TRUE/FALSE)
+#' @param adjtopage Optional argument. Allow to adjust columns width. This argument need a vector compose of page orientation (landscape/portait), does the first columns need to be bigger (TRUE/FALSE), ratio of first column size (as numeric), does space between line and text has to be change (as numeric, 0 no space)
 #' @param savename Optional argument. Saves the table in .docx format in the working space. The argument must be in quotes.
 #'
 #' @import rempsyc flextable export officer stringr dplyr tidyr rlang
@@ -284,7 +284,7 @@ TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NU
 
   if(!missing(adjtopage)){
     if(adjtopage[1] == "landscape"){
-      totwidth <- 22
+      totwidth <- 24.7
     }else if(adjtopage[1] == "portrait"){
       totwidth <- 16
     }
@@ -302,10 +302,10 @@ TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NU
     }
 
     x <- width(x, j = 1:length(x$col_keys), width = width, unit = "cm")
-    if(adjtopage[4] == "TRUE"){
-      x <- padding(x, padding = 0, part = "all")
-    }
 
+    if(length(adjtopage) > 3){
+        x <- padding(x, padding = adjtopage[4], part = "all")
+    }
   }
 
   if(!missing(savename)){
