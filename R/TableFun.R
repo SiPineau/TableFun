@@ -304,7 +304,7 @@ TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NU
     x <- width(x, j = 1:length(x$col_keys), width = width, unit = "cm")
 
     if(length(adjtopage) > 3){
-        x <- padding(x, padding = adjtopage[4], part = "all")
+        x <- padding(x, padding = as.numeric(adjtopage[4]), part = "all")
     }
   }
 
