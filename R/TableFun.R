@@ -151,7 +151,7 @@ TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NU
   }
 
   x<-flextable(df) %>%
-    separate_header() %>%
+    separate_header(., split = "_") %>%
     autofit()
 
   if(!missing(merge.col)){
