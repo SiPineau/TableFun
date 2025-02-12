@@ -25,7 +25,7 @@
 #' @param savename Optional argument. Saves the table in .docx format in the working space. The argument must be in quotes.
 #'
 #' @import rempsyc flextable export officer stringr dplyr tidyr rlang
-#' @return
+#' @return APA Table
 #' @export
 #' @examples
 #' # Simple table

@@ -21,6 +21,7 @@ TableFun(
   col.bg.color = NULL,
   row.bg.color = NULL,
   spread_col = NULL,
+  adjtopage = NULL,
   savename = NULL
 )
 }
@@ -53,9 +54,14 @@ TableFun(
 
 \item{spread_col}{Optional argument. Spread one column values as row separator based on an other character column. This argument must be a vector composed of: "column name to be spread", "column name to be separate", postition of spreaded column value : "center" / "left"}
 
+\item{adjtopage}{Optional argument. Set columns width to default page margins (2.5) and set space between text and lines.This argument must be a vector composed of: orientation of page ("landscape/portrait"), does first column need to be wider (True/False), if previews element set to TRUE set ratio of first column size (numeric greater than 0), space between lines and text (numeric, in points).}
+
 \item{savename}{Optional argument. Saves the table in .docx format in the working space. The argument must be in quotes.}
 
 \item{col.bg.color/row.bg.color}{Optional argument. Add a color to the background of selected columns/row. This argument must be a vector composed of: column's/row's number, "color code", part of the table affected ("header" / "body" / "all").}
+}
+\value{
+APA Table
 }
 \description{
 Create an APA norme table.
@@ -66,7 +72,7 @@ df<-data.frame("Variables" = c(1,2,3),
                "Mean" = c(32,22,15),
                "SD" = c(0.2,0.8,0.4))
 
-TableFun(df, header = "Mean and sd",foot.note.header = c(3,"a","SD = Standard deviation"))
+TableFun(df, header = "Mean and sd", foot.note.header = c(3,"a","SD = Standard deviation"))
 
 # Multiple colmuns names level
 
