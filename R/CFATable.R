@@ -38,7 +38,7 @@ CFATable <- function(CFAfit, header, digits = 3, footer, adjtopage = c("portrait
   cfatable <- cfatable %>% mutate_if(is.numeric, round, digits)
 
   if(CorMatrix == TRUE | !missing(FCorMat)){
-    cfatable <- cfatable %>% mutate(Items = rownames(.), Section = "Factor loadings") %>% relocate(Section, Items)
+    cfatable <- cfatable %>% mutate(Section = rownames(.), Items = "Factor loadings") %>% relocate(Section, Items)
     if(!missing(FCorMat)){
       FCorMat[upper.tri(FCorMat, diag = F)] <- NA
 
@@ -56,7 +56,7 @@ CFATable <- function(CFAfit, header, digits = 3, footer, adjtopage = c("portrait
 
     cfapsitable <- rbind(colnames(cfapsitable), cfapsitable)
 
-    cfapsitable <- cfapsitable %>% mutate(Items = rownames(.), Section = "Correlation matrix") %>% relocate(Section, Items)
+    cfapsitable <- cfapsitable %>% mutate(Section = rownames(.), Items = "Correlation matrix") %>% relocate(Section, Items)
 
     cfapsitable[1,2] = " "
 
