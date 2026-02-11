@@ -69,7 +69,7 @@ CFATable <- function(CFAfit, header, digits = 3, footer, adjtopage = c("portrait
   }else{
     cfatable <- cfatable %>% mutate(Items = rownames(.)) %>% relocate(Items)
 
-    colnames(cfatable) <- paste("Factor loadings", colnames(cfatable), sep = "_")
+    colnames(cfatable) <- c(colnames(cfatable)[1], paste(colnames(cfatable)[-1], "Factor loadings", sep = "_"))
 
     TF <- TableFun(cfatable, header = header, adjtopage = adjtopage, digits = digits, savename = savename, left.align = 1, footer = footer)
   }
