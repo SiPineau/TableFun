@@ -58,7 +58,7 @@
 #' TableFun(df,header = "Mean and sd across 2 times points", spread_col = c("Variables", "ind", "left"))
 
 
-TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NULL, top.align = NULL, bottom.align = NULL, merge.col = NULL, footer = NULL, foot.note.header = NULL, foot.note.body = NULL, H.rotate = NULL, B.rotate = NULL, col.bg.color = NULL, row.bg.color = NULL, spread_col = NULL, adjtopage = NULL, savename = NULL){
+TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NULL, top.align = NULL, bottom.align = NULL, merge.col = NULL, merge.col.row = NULL, footer = NULL, foot.note.header = NULL, foot.note.body = NULL, H.rotate = NULL, B.rotate = NULL, col.bg.color = NULL, row.bg.color = NULL, spread_col = NULL, adjtopage = NULL, savename = NULL){
 
   df <- df %>% data.frame(., check.names = F) %>%
     mutate_if(is.numeric, round, digits = digits)
@@ -280,6 +280,10 @@ TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NU
 
   }
 
+  if(!missing(merge.col.row)){
+    x <- merge_h(x, i=merge.col.row, part = "header")
+  }
+
   x <- fix_border_issues(x,part = "all")
 
   if(!missing(adjtopage)){
@@ -288,6 +292,8 @@ TableFun <- function(df, header, digits = 2, left.align = NULL, right.align = NU
     }else if(adjtopage[1] == "portrait"){
       totwidth <- 16
     }
+
+
 
     width <- rep(totwidth/length(x$col_keys),length(x$col_keys))
 

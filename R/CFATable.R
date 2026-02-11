@@ -29,7 +29,7 @@
 #'
 #' CFATable(cfafit, "CFA APA table")
 
-CFATable <- function(CFAfit, header, digits = 3, footer, adjtopage = c("portrait", F,1,3), CorMatrix = F, FCorMat = NULL, savename){
+CFATable <- function(CFAfit, header, digits = 3, footer, adjtopage = c("portrait", F,1,3), CorMatrix = F, FCorMat = NULL,merge.col.row = NULL, savename){
 
   cfatable <- data.frame(lavInspect(CFAfit, what = "std")$lambda)
 
@@ -71,7 +71,7 @@ CFATable <- function(CFAfit, header, digits = 3, footer, adjtopage = c("portrait
 
     colnames(cfatable) <- c(colnames(cfatable)[1], paste(colnames(cfatable)[-1], "Factor loadings", sep = "_"))
 
-    TF <- TableFun(cfatable, header = header, adjtopage = adjtopage, digits = digits, savename = savename, left.align = 1, footer = footer)
+    TF <- TableFun(cfatable, header = header, adjtopage = adjtopage, digits = digits, merge.col.row = merge.col.row, savename = savename, left.align = 1, footer = footer)
   }
   return(TF)
 }
