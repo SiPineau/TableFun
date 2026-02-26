@@ -64,7 +64,7 @@ CFATable <- function(CFAfit, header, digits = 3, footer, adjtopage = c("portrait
 
     cfatable$Items <- factor(cfatable$Items, levels = c("Factor loadings", "Correlation matrix"))
 
-    TF <- TableFun(cfatable, header = header, adjtopage = adjtopage, spread_col = c("Section", "Items", "center"), digits = digits, savename = savename, left.align = 1, footer = footer)
+    TF <- TableFun(cfatable, header = header, adjtopage = adjtopage, spread_col = c("Items", "Section", "center"), digits = digits, savename = savename, left.align = 1, footer = footer)
 
   }else{
     cfatable <- cfatable %>% mutate(Items = rownames(.)) %>% relocate(Items)
