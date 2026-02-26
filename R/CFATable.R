@@ -29,7 +29,7 @@
 #'
 #' CFATable(cfafit, "CFA APA table")
 
-CFATable <- function(CFAfit, header, digits = 3, footer, adjtopage = c("portrait", F,1,3), CorMatrix = F, FCorMat = NULL,merge.col.row = NULL, savename){
+CFATable <- function(CFAfit, header, digits = 3, footer, adjtopage = c("portrait", F,1,3), CorMatrix = F, FCorMat = NULL, merge.col.row = NULL, savename){
 
   cfatable <- data.frame(lavInspect(CFAfit, what = "std")$lambda)
 
@@ -42,7 +42,7 @@ CFATable <- function(CFAfit, header, digits = 3, footer, adjtopage = c("portrait
     if(!missing(FCorMat)){
       FCorMat[upper.tri(FCorMat, diag = F)] <- NA
 
-      cfapsitable <- data.frame(CorMatrix)
+      cfapsitable <- data.frame(FCorMat)
 
     }else{
       cfapsitable <- lavInspect(CFAfit, what = "std")$psi
@@ -62,7 +62,7 @@ CFATable <- function(CFAfit, header, digits = 3, footer, adjtopage = c("portrait
 
     cfatable <- rbind(cfatable, cfapsitable)
 
-    cfatable$Section <- factor(cfatable$Section, levels = c("Factor loadings", "Correlation matrix"))
+    cfatable$Items <- factor(cfatable$Items, levels = c("Factor loadings", "Correlation matrix"))
 
     TF <- TableFun(cfatable, header = header, adjtopage = adjtopage, spread_col = c("Section", "Items", "center"), digits = digits, savename = savename, left.align = 1, footer = footer)
 
